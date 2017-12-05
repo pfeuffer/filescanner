@@ -29,14 +29,14 @@ public class FileScanner {
 
     @Scheduled(fixedDelayString = "${scanIntervalMs}")
     public void scan() {
-        LOG.info("start scan of " + directory);
+        LOG.debug("start scan of " + directory);
         Path directoryToWatch = Paths.get(directory);
         try {
             scan(directoryToWatch);
-            LOG.info("scan finished");
         } catch (Exception e) {
             LOG.error("error scanning directory", e);
         }
+        LOG.debug("scan finished");
     }
 
     private void scan(Path directoryToWatch) {
