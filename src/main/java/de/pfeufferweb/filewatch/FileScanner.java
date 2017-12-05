@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -18,9 +20,11 @@ public class FileScanner {
     private static Log LOG = LogFactory.getLog(FileScanner.class);
 
     private final String directory;
+    private final FileInfoHandler fileInfoHandler;
 
-    public FileScanner(@Value("${directory}") String directory) {
+    public FileScanner(@Value("${directory}") String directory, FileInfoHandler fileInfoHandler) {
         this.directory = directory;
+        this.fileInfoHandler = fileInfoHandler;
     }
 
     @Scheduled(fixedDelayString = "${scanIntervalMs}")
@@ -36,10 +40,11 @@ public class FileScanner {
     }
 
     private void scan(Path directoryToWatch) {
-        listDirectory(directoryToWatch)
+        Set<FileInfo> files = listDirectory(directoryToWatch)
                 .filter(Files::isRegularFile)
                 .map(FileInfo::buildFrom)
-                .forEach(System.out::println);
+                .collect(Collectors.toSet());
+        fileInfoHandler.handle(files);
     }
 
     private Stream<Path> listDirectory(Path directoryToWatch) {
