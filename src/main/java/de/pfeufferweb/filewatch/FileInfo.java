@@ -15,6 +15,14 @@ public class FileInfo {
         this.fileTime = fileTime;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public FileTime getFileTime() {
+        return fileTime;
+    }
+
     public static FileInfo buildFrom(Path file) {
         return new FileInfo(file.getFileName().toString(), lastModifiedTime(file));
     }

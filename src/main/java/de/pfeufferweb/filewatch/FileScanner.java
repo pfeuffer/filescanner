@@ -40,10 +40,9 @@ public class FileScanner {
     }
 
     private void scan(Path directoryToWatch) {
-        Set<FileInfo> files = listDirectory(directoryToWatch)
+        Stream<FileInfo> files = listDirectory(directoryToWatch)
                 .filter(Files::isRegularFile)
-                .map(FileInfo::buildFrom)
-                .collect(Collectors.toSet());
+                .map(FileInfo::buildFrom);
         fileInfoHandler.handle(files);
     }
 

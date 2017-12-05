@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -30,7 +33,7 @@ public class FileScannerTest {
     private FileInfoHandler fileInfoHandler;
 
     @Captor
-    private ArgumentCaptor<Set<FileInfo>> fileInfoSetCaptor;
+    private ArgumentCaptor<Stream<FileInfo>> fileInfoSetCaptor;
 
     @Test
     public void shouldFindFiles() throws IOException {
@@ -41,7 +44,7 @@ public class FileScannerTest {
         new FileScanner(tempDir.getAbsolutePath(), fileInfoHandler).scan();
 
         verify(fileInfoHandler).handle(any());
-        assertThat(fileInfoSetCaptor.getValue().size(), is(1));
+        assertThat(fileInfoSetCaptor.getValue().collect(toList()).size(), is(1));
     }
 
     @Test
@@ -55,7 +58,7 @@ public class FileScannerTest {
         new FileScanner(tempDir.getAbsolutePath(), fileInfoHandler).scan();
 
         verify(fileInfoHandler).handle(any());
-        assertThat(fileInfoSetCaptor.getValue().isEmpty(), is(true));
+        assertThat(fileInfoSetCaptor.getValue().collect(toList()).isEmpty(), is(true));
     }
 
     @Before

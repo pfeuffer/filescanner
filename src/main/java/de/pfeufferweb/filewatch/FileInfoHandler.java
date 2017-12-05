@@ -1,8 +1,8 @@
 package de.pfeufferweb.filewatch;
 
-import java.util.Set;
+import java.util.stream.Stream;
 
 public interface FileInfoHandler {
 
-    void handle(Set<FileInfo> files);
+    void handle(Stream<FileInfo> files);
 }
