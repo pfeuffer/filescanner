@@ -5,9 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.pfeufferweb</groupId>
-    <artifactId>filewatch</artifactId>
+    <artifactId>motioncontrol</artifactId>
     <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <name>Motion Control</name>
+    <description>Web service to control motion (http://motion.sourceforge.net/)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
