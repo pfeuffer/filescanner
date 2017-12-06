@@ -1,11 +1,11 @@
 # Motion Control
 
 This is a small web service to control motion (https://motion-project.github.io/),
-a "a highly configurable program that monitors video signals from many types of
+"a highly configurable program that monitors video signals from many types of
 cameras".
 
 Goal is to start and stop motion process and to send alert mails whenever a motion is
-detected.
+detected (that is, a image file is stored by motion).
 
 ## Tech stuff
 
@@ -79,3 +79,11 @@ To stop it:
 You can get the status calling:
 
 ```curl -u user:pwd http://localhost:8080/status```
+
+## Further development
+
+This is the plan for upcoming development:
+
+1. Include links in alert mails to see the images captured by motion.
+1. Create a little web frontend to get rid of ```curl```.
+1. Develop a simple alarm app for Android.
