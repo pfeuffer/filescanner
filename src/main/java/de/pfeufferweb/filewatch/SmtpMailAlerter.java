@@ -2,7 +2,7 @@ package de.pfeufferweb.filewatch;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.mail.Message;
@@ -18,42 +18,41 @@ public class SmtpMailAlerter implements Alerter{
 
     private static Log LOG = LogFactory.getLog(SmtpMailAlerter.class);
 
-    private final String mailRecipientAddress;
-    private final String mailSenderAddress;
-    private final String mailHost;
+    private final Environment environment;
+    private final UrlFactory urlFactory;
 
-    public SmtpMailAlerter(
-            @Value("${mail.recipient}") String mailRecipientAddress,
-            @Value("${mail.sender}") String mailSenderAddress,
-            @Value("${mail.host}") String mailHost) {
-        this.mailRecipientAddress = mailRecipientAddress;
-        this.mailSenderAddress = mailSenderAddress;
-        this.mailHost = mailHost;
+    public SmtpMailAlerter(Environment environment, UrlFactory urlFactory) {
+        this.environment = environment;
+        this.urlFactory = urlFactory;
     }
 
     @Override
     public void alert(List<FileInfo> fileInfos) {
         // Setup mail server
-        System.getProperties().setProperty("mail.smtp.host", mailHost);
+        System.getProperties().setProperty("mail.smtp.host", environment.getProperty("mail.host"));
 
         Session session = Session.getDefaultInstance(System.getProperties());
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(mailSenderAddress));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailRecipientAddress));
+            message.setFrom(new InternetAddress(environment.getProperty("mail.sender")));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(environment.getProperty("mail.recipient")));
             message.setSubject("A new motion has been detected!");
             message.setText(buildText(fileInfos));
-            Transport.send(message);
+            doSend(message);
             LOG.info("Sent message successfully....");
         } catch (MessagingException e) {
             LOG.error("error sending mail", e);
         }
     }
 
+    void doSend(MimeMessage message) throws MessagingException {
+        Transport.send(message);
+    }
+
     private String buildText(List<FileInfo> fileInfos) {
         StringBuilder b = new StringBuilder();
         b.append("We have detected ").append(fileInfos.size()).append(" new motion images!\n");
-        fileInfos.forEach(i -> b.append("- ").append(i.getName()).append("\t").append(i.getFileTime()).append("\n"));
+        fileInfos.forEach(i -> b.append("- ").append(urlFactory.createImageUrl(i.getName())).append("\t").append(i.getFileTime()).append("\n"));
         return b.toString();
     }
 }

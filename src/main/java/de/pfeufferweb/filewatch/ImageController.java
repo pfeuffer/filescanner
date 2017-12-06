@@ -30,11 +30,11 @@ public class ImageController {
         this.directory = directory;
     }
 
-    @GetMapping("/{name}.{type}")
-    public ResponseEntity<InputStreamResource> readFile(@PathVariable(name = "name") String name, @PathVariable(name = "type") String type) {
+    @GetMapping("/{name:.+}")
+    public ResponseEntity<InputStreamResource> readFile(@PathVariable("name") String name) {
         Path directoryPath = Paths.get(directory);
 
-        Path filePath = directoryPath.resolve(name + "." + type);
+        Path filePath = directoryPath.resolve(name);
         long size;
         InputStream inputStream;
         try {
@@ -47,7 +47,7 @@ public class ImageController {
         return ResponseEntity.ok()
                 .contentLength(size)
                 .contentType(MediaType.valueOf("image/jpeg"))
-                .header("Content-Disposition", "attachment; filename=" + name + "." + type)
+                .header("Content-Disposition", "attachment; filename=" + name)
                 .body(new InputStreamResource(inputStream));
     }
 }
