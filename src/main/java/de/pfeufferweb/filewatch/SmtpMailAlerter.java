@@ -42,11 +42,18 @@ public class SmtpMailAlerter implements Alerter{
             message.setFrom(new InternetAddress(mailSenderAddress));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailRecipientAddress));
             message.setSubject("A new motion has been detected!");
-            message.setText("We have detected " + fileInfos.size() + " new motion images!");
+            message.setText(buildText(fileInfos));
             Transport.send(message);
             LOG.info("Sent message successfully....");
         } catch (MessagingException e) {
             LOG.error("error sending mail", e);
         }
+    }
+
+    private String buildText(List<FileInfo> fileInfos) {
+        StringBuilder b = new StringBuilder();
+        b.append("We have detected ").append(fileInfos.size()).append(" new motion images!\n");
+        fileInfos.forEach(i -> b.append("- ").append(i.getName()).append("\t").append(i.getFileTime()).append("\n"));
+        return b.toString();
     }
 }
