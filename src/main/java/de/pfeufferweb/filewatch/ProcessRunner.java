@@ -34,6 +34,7 @@ public class ProcessRunner {
         if (isRunning()) {
             throw new ProcessAlreadyRunningException();
         }
+        LOG.info("starting motion process");
         try {
             process = Runtime.getRuntime().exec(startupCommand, null, null);
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -41,19 +42,23 @@ public class ProcessRunner {
             while ((line = in.readLine()) != null) {
                 LOG.info("process out: " + line);
                 if (startupCheck.matcher(line).matches()) {
+                    LOG.info("motion started successfully");
                     return;
                 }
             }
         } catch (Exception e) {
             throw new ProcessStartupException(e);
         }
+        LOG.info("could not start motion process");
         throw new ProcessStartupTerminatedIrregularyException();
     }
 
     public void stop() {
+        LOG.info("stopping motion process");
         process.destroy();
         try {
             process.waitFor();
+            LOG.info("stopped motion process");
         } catch (InterruptedException e) {
             LOG.error("error stopping process", e);
         }
