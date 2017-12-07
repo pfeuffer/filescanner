@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/motioncontrol/motion")
+@RequestMapping("/motion")
 public class ProcessController {
 
     private final ProcessRunner processRunner;

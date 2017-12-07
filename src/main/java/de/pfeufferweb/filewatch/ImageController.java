@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Controller
-@RequestMapping("/motioncontrol/image")
+@RequestMapping("/image")
 public class ImageController {
 
     private static Log LOG = LogFactory.getLog(ImageController.class);
