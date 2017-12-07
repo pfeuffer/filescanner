@@ -1,0 +1,33 @@
+html {
+    font-family: sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+button {
+    border-radius: 11px;
+    box-shadow: 4px 4px 3px #666666;
+    color: #ffffff;
+    font-size: 20px;
+    background: #3498db;
+    padding: 10px 20px 10px 20px;
+    border: 0;
+}
+
+button:hover {
+    background: #3cb0fd;
+}
+
+.center {
+    text-align: center;
+}
+
+.running {
+    background-color: red;
+}
+
+.stopped {
+    background-color: lightgreen;
+}
