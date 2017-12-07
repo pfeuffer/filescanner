@@ -11,9 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @SpringBootApplication
 @EnableScheduling
-public class FileWatchApplication {
+public class MotionControlApplication {
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(FileWatchApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(MotionControlApplication.class, args);
     }
 }
 
