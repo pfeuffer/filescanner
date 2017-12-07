@@ -37,7 +37,7 @@ public class SmtpMailAlerter implements Alerter{
             message.setFrom(new InternetAddress(environment.getProperty("mail.sender")));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(environment.getProperty("mail.recipient")));
             message.setSubject("A new motion has been detected!");
-            message.setText(buildText(fileInfos));
+            message.setContent(buildText(fileInfos), "text/html; charset=utf-8");
             doSend(message);
             LOG.info("Sent message successfully....");
         } catch (MessagingException e) {
@@ -51,8 +51,13 @@ public class SmtpMailAlerter implements Alerter{
 
     private String buildText(List<FileInfo> fileInfos) {
         StringBuilder b = new StringBuilder();
-        b.append("We have detected ").append(fileInfos.size()).append(" new motion images!\n");
-        fileInfos.forEach(i -> b.append("- ").append(urlFactory.createImageUrl(i.getName())).append("\t").append(i.getFileTime()).append("\n"));
+        b.append("<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>\n");
+        b.append("<html>\n<body>\n");
+        b.append("<b>We have detected ").append(fileInfos.size()).append(" new motion images!</b>\n");
+        b.append("<ul>");
+        fileInfos.forEach(i -> b.append("<li><a href='").append(urlFactory.createImageUrl(i.getName())).append("'>").append(i.getFileTime()).append("</a></li>\n"));
+        b.append("</ul>\n");
+        b.append("</body>\n</html>\n");
         return b.toString();
     }
 }
