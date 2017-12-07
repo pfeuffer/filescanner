@@ -29,7 +29,7 @@ public class UrlFactoryTest {
     private UrlFactory urlFactory;
 
     @Test
-    public void x() {
+    public void shouldProduceCorrectImageUrl() {
         String imageUrl = urlFactory.createImageUrl("x");
         assertEquals("http://localhost:8080/motioncontrol/image/x", imageUrl);
     }
