@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Motion Control</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body th:style="*{running}?'background-color:red;':'background-color:lightgreen;'">
+<h1 th:text="*{running}?'Motion is running':'Motion is disarmed'"></h1>
+
+<form th:action="*{running}?'/motioncontrol/stop':'/motioncontrol/start'" method="post">
+    <button type="submit" name="start_stop" value="start_stop" class="btn-link"
+            th:text="*{running}?'Stop it':'Start it'"></button>
+</form>
+</body>
+</html>

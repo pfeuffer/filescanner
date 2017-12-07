@@ -19,15 +19,16 @@ public class ProcessController {
 
     @PostMapping("/start")
     public ResponseEntity<String> start() {
-        if (processRunner.isRunning()) {
+        try {
+            processRunner.start();
+        } catch (ProcessAlreadyRunningException e) {
             return ResponseEntity.badRequest().body("process already running");
-        }
-        boolean started = processRunner.start();
-        if (started) {
-            return ResponseEntity.ok("process started successfully");
-        } else {
+        } catch (ProcessStartupTerminatedIrregularyException e) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("process ended irregular");
+        } catch (ProcessStartupException e) {
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("process ended");
         }
+        return ResponseEntity.ok("process started successfully");
     }
 
     @PostMapping("/stop")

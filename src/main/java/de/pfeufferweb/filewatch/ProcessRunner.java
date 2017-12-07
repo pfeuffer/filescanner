@@ -30,7 +30,10 @@ public class ProcessRunner {
         return process != null && process.isAlive();
     }
 
-    public boolean start() {
+    public void start() throws ProcessStartupException {
+        if (isRunning()) {
+            throw new ProcessAlreadyRunningException();
+        }
         try {
             process = Runtime.getRuntime().exec(startupCommand, null, null);
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -38,13 +41,13 @@ public class ProcessRunner {
             while ((line = in.readLine()) != null) {
                 LOG.info("process out: " + line);
                 if (startupCheck.matcher(line).matches()) {
-                    return true;
+                    return;
                 }
             }
         } catch (Exception e) {
-            LOG.fatal("could not start process " + startupCommand, e);
+            throw new ProcessStartupException(e);
         }
-        return false;
+        throw new ProcessStartupTerminatedIrregularyException();
     }
 
     public void stop() {
