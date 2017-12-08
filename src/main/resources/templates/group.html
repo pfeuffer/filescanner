@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Motion Control Overview</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="../css/normalize.css"/>
+    <link rel="stylesheet" href="../css/simple.css"/>
+</head>
+<body>
+<p th:text="'We captured ' + ${#lists.size(fileUrls)} + ' images:'"></p>
+<img th:each="url: ${fileUrls}" th:src="${url}"/>
+</body>
+</html>

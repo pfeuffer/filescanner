@@ -3,8 +3,8 @@
 <head>
     <title>Motion Control</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="normalize.css"/>
-    <link rel="stylesheet" href="simple.css"/>
+    <link rel="stylesheet" href="css/normalize.css"/>
+    <link rel="stylesheet" href="css/simple.css"/>
 </head>
 <body th:class="*{running}?'running':'stopped'">
 <h1 th:text="*{running}?'Motion is running':'Motion is disarmed'"></h1>
@@ -13,5 +13,12 @@
     <button type="submit" name="start_stop" value="start_stop" class="btn-link"
             th:text="*{running}?'Stop it':'Start it'"></button>
 </form>
+
+<ul th:each="groupWithUrl: ${groupUrls}">
+    <li>
+        <a th:href="${groupWithUrl.url}" th:text="${groupWithUrl.group}">nothing</a>
+    </li>
+</ul>
+
 </body>
 </html>

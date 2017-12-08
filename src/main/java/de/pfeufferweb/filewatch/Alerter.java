@@ -1,7 +1,8 @@
 package de.pfeufferweb.filewatch;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface Alerter {
-    void alert(List<FileInfo> fileInfos);
+    void alert(Instant instant, List<FileInfo> fileInfos);
 }
