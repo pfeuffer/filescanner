@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:class="*{running}?'running':'stopped'">
 <head>
     <title>Motion Control</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="css/normalize.css"/>
     <link rel="stylesheet" href="css/simple.css"/>
 </head>
-<body th:class="*{running}?'running':'stopped'">
+<body>
 <h1 th:text="*{running}?'Motion is running':'Motion is disarmed'"></h1>
 
 <form th:class="center" th:action="*{running}?'/motioncontrol/stop':'/motioncontrol/start'" method="post">
@@ -14,11 +14,9 @@
             th:text="*{running}?'Stop it':'Start it'"></button>
 </form>
 
-<ul th:each="groupWithUrl: ${groupUrls}">
-    <li>
+<p class="center" th:each="groupWithUrl: ${groupUrls}">
         <a th:href="${groupWithUrl.url}" th:text="${groupWithUrl.group}">nothing</a>
-    </li>
-</ul>
+</p>
 
 </body>
 </html>
