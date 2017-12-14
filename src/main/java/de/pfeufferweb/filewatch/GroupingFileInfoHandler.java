@@ -27,6 +27,6 @@ public class GroupingFileInfoHandler implements FileInfoHandler {
     }
 
     private Instant instantFromFileInfo(FileInfo fileInfo) {
-        return Instant.ofEpochMilli(fileInfo.getFileTime().toMillis() / groupTime * groupTime);
+        return Instant.ofEpochMilli(fileInfo.getFileTime().toEpochMilli() / groupTime * groupTime);
     }
 }
