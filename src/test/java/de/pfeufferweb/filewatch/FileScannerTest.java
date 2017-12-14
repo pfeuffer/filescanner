@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -41,7 +39,7 @@ public class FileScannerTest {
         Path newFile = new File(tempDir, "a").toPath();
         Files.createFile(newFile);
 
-        new FileScanner(tempDir.getAbsolutePath(), fileInfoHandler).scan();
+        new FileScanner(tempDir.getAbsolutePath(), "a", fileInfoHandler).scan();
 
         verify(fileInfoHandler).handle(any());
         assertThat(fileInfoSetCaptor.getValue().collect(toList()).size(), is(1));
@@ -55,10 +53,25 @@ public class FileScannerTest {
 
         doNothing().when(fileInfoHandler).handle(fileInfoSetCaptor.capture());
 
-        new FileScanner(tempDir.getAbsolutePath(), fileInfoHandler).scan();
+        new FileScanner(tempDir.getAbsolutePath(), "a", fileInfoHandler).scan();
 
         verify(fileInfoHandler).handle(any());
         assertThat(fileInfoSetCaptor.getValue().collect(toList()).isEmpty(), is(true));
+    }
+
+    @Test
+    public void shouldFindOnlyFilesOfAcceptedType() throws IOException {
+        File tempDir = temporaryFolder.getRoot();
+        Files.createFile(new File(tempDir, "file.good").toPath());
+        Files.createFile(new File(tempDir, "file.OK").toPath());
+        Files.createFile(new File(tempDir, "file.bad").toPath());
+
+        doNothing().when(fileInfoHandler).handle(fileInfoSetCaptor.capture());
+
+        new FileScanner(tempDir.getAbsolutePath(), "ok,good", fileInfoHandler).scan();
+
+        verify(fileInfoHandler).handle(any());
+        assertThat(fileInfoSetCaptor.getValue().collect(toList()).size(), is(2));
     }
 
     @Before

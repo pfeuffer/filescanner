@@ -10,9 +10,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Collection;
 import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
 
 @Component
 public class FileScanner {
@@ -21,9 +22,11 @@ public class FileScanner {
 
     private final String directory;
     private final FileInfoHandler fileInfoHandler;
+    private final Collection<String> acceptedTypes;
 
-    public FileScanner(@Value("${directory}") String directory, FileInfoHandler fileInfoHandler) {
+    public FileScanner(@Value("${directory}") String directory, @Value("${acceptedTypes}") String acceptedTypes, FileInfoHandler fileInfoHandler) {
         this.directory = directory;
+        this.acceptedTypes = asList(acceptedTypes.toLowerCase().split(","));
         this.fileInfoHandler = fileInfoHandler;
     }
 
@@ -42,6 +45,7 @@ public class FileScanner {
     private void scan(Path directoryToWatch) {
         Stream<FileInfo> files = listDirectory(directoryToWatch)
                 .filter(Files::isRegularFile)
+                .filter(f -> acceptedTypes.stream().anyMatch(type -> f.toString().toLowerCase().endsWith(type)))
                 .map(FileInfo::buildFrom);
         fileInfoHandler.handle(files);
     }
