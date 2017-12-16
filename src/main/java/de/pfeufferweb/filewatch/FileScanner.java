@@ -54,8 +54,13 @@ public class FileScanner {
     private Stream<FileInfo> createFileInfos(Stream<Path> pathStream) {
         return pathStream
                 .filter(Files::isRegularFile)
-                .filter(f -> acceptedTypes.stream().anyMatch(type -> f.toString().toLowerCase().endsWith(type)))
+                .filter(this::matchesAcceptedType)
                 .map(FileInfo::buildFrom);
+    }
+
+    private boolean matchesAcceptedType(Path f) {
+        String fileName = f.toString().toLowerCase();
+        return acceptedTypes.stream().anyMatch(fileName::endsWith);
     }
 
     private Optional<Stream<Path>> listDirectory(Path directoryToWatch) {
