@@ -35,6 +35,7 @@ The most important settings are listed in the table below:
 | command used to start motion | startup.command | ☑ | motion | --startup.command=~/motion.sh |
 | interval how often the directory will be scanned in ms | scanIntervalMs | ☑ | 30000 (every half minute) | --scanIntervalMs=600000 |
 | time window to group files | groupTime | ☑ | 300000 (5 minutes) | --groupTime=900000 |
+| specify accepted image types | acceptedTypes | ☑ | .jpg,.tiff | --acceptedTypes=.jpg |
 
 The principle command looks like this:
 
