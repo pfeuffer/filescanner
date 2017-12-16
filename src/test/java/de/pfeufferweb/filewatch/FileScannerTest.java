@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -72,6 +73,13 @@ public class FileScannerTest {
 
         verify(fileInfoHandler).handle(any());
         assertThat(fileInfoSetCaptor.getValue().collect(toList()).size(), is(2));
+    }
+
+    @Test
+    public void shouldHandleErrorsReadingDirectory() throws IOException {
+        new FileScanner("/i/bet/this/does/not/exist", "a", fileInfoHandler).scan();
+
+        verify(fileInfoHandler, never()).handle(any());
     }
 
     @Before

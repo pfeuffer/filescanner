@@ -11,9 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 @Component
 public class FileScanner {
@@ -43,19 +46,24 @@ public class FileScanner {
     }
 
     private void scan(Path directoryToWatch) {
-        Stream<FileInfo> files = listDirectory(directoryToWatch)
+        listDirectory(directoryToWatch)
+                .map(this::createFileInfos)
+                .ifPresent(fileInfoHandler::handle);
+    }
+
+    private Stream<FileInfo> createFileInfos(Stream<Path> pathStream) {
+        return pathStream
                 .filter(Files::isRegularFile)
                 .filter(f -> acceptedTypes.stream().anyMatch(type -> f.toString().toLowerCase().endsWith(type)))
                 .map(FileInfo::buildFrom);
-        fileInfoHandler.handle(files);
     }
 
-    private Stream<Path> listDirectory(Path directoryToWatch) {
+    private Optional<Stream<Path>> listDirectory(Path directoryToWatch) {
         try {
-            return Files.list(directoryToWatch);
+            return of(Files.list(directoryToWatch));
         } catch (IOException e) {
             LOG.fatal("could not list files in directory", e);
-            return Stream.empty();
+            return empty();
         }
     }
 }
