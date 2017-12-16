@@ -1,6 +1,5 @@
 package de.pfeufferweb.filewatch;
 
-import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +11,9 @@ import java.time.Instant;
 public class UrlFactory {
 
     private final Environment environment;
-    private final EmbeddedWebApplicationContext context;
 
-    public UrlFactory(Environment environment, EmbeddedWebApplicationContext context) {
+    public UrlFactory(Environment environment) {
         this.environment = environment;
-        this.context = context;
     }
 
     public String createImageUrl(String fileName) {
@@ -27,12 +24,16 @@ public class UrlFactory {
         return baseUrl() + "/view/" + new InstantToStringConverter().convert(instant);
     }
 
-    private String baseUrl() {
+    public String hostPart() {
         return environment.getProperty("server.protocol") +
                 "://" +
                 environment.getProperty("server.hostname") +
-                ":" +
-                context.getEmbeddedServletContainer().getPort() +
-                "/motioncontrol";
+                (environment.getProperty("server.port") == null
+                        ? ""
+                        : ":" + environment.getProperty("server.port"));
+    }
+
+    private String baseUrl() {
+        return "/motioncontrol";
     }
 }

@@ -4,11 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.context.embedded.EmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -20,27 +19,43 @@ public class UrlFactoryTest {
 
     @Mock
     private Environment environment;
-    @Mock
-    private EmbeddedWebApplicationContext context;
-    @Mock
-    private EmbeddedServletContainer container;
 
     @InjectMocks
     private UrlFactory urlFactory;
 
+    private final Properties properties = new Properties();
+
     @Test
-    public void shouldProduceCorrectImageUrl() {
+    public void shouldProduceCorrectImagePath() {
         String imageUrl = urlFactory.createImageUrl("x");
-        assertEquals("http://localhost:8080/motioncontrol/image/x", imageUrl);
+        assertEquals("/motioncontrol/image/x", imageUrl);
+    }
+
+    @Test
+    public void shouldProduceCorrectGroupPath() {
+        properties.setProperty("server.port", "8080");
+        Instant group = Instant.parse("2017-12-30T13:15:00.000Z");
+        String imageUrl = urlFactory.createGroupUrl(group);
+        assertEquals("/motioncontrol/view/2017-12-30T13:15:00Z", imageUrl);
+    }
+
+    @Test
+    public void shouldProduceCorrectHostUrlWithPort() {
+        properties.setProperty("server.port", "8080");
+        String imageUrl = urlFactory.hostPart();
+        assertEquals("http://localhost:8080", imageUrl);
+    }
+
+    @Test
+    public void shouldProduceCorrectHostUrlWithoutPort() {
+        String imageUrl = urlFactory.hostPart();
+        assertEquals("http://localhost", imageUrl);
     }
 
     @Before
     public void init() throws IOException {
         initMocks(this);
-        Properties properties = new Properties();
         properties.load(UrlFactoryTest.class.getResourceAsStream("/application.properties"));
         when(environment.getProperty(anyString())).thenAnswer(x -> properties.getProperty(x.getArguments()[0].toString()));
-        when(context.getEmbeddedServletContainer()).thenReturn(container);
-        when(container.getPort()).thenReturn(8080);
     }
 }

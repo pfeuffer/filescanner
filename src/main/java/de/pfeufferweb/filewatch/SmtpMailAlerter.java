@@ -55,9 +55,9 @@ public class SmtpMailAlerter implements Alerter{
         b.append("<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>\n");
         b.append("<html>\n<body>\n");
         b.append("<b>We have detected ").append(fileInfos.size()).append(" new motion images!</b>\n");
-        b.append("<p><a href='" + urlFactory.createGroupUrl(instant) + "'>Overview</a>\n");
+        b.append("<p><a href='").append(urlFactory.hostPart()).append(urlFactory.createGroupUrl(instant)).append("'>Overview</a>\n");
         b.append("<ul>");
-        fileInfos.forEach(i -> b.append("<li><a href='").append(urlFactory.createImageUrl(i.getName())).append("'>").append(i.getFileTime()).append("</a></li>\n"));
+        fileInfos.forEach(i -> b.append("<li><a href='").append(urlFactory.hostPart()).append(urlFactory.createImageUrl(i.getName())).append("'>").append(i.getFileTime()).append("</a></li>\n"));
         b.append("</ul>\n");
         b.append("</body>\n</html>\n");
         return b.toString();
