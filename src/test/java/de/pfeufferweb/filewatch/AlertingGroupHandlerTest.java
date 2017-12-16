@@ -4,8 +4,10 @@ import org.junit.Test;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.Is.is;
@@ -54,5 +56,15 @@ public class AlertingGroupHandlerTest {
         handler.handle(singletonMap(instant1, files1));
 
         assertThat(handler.get(instant1), is(equalTo(files1)));
+    }
+
+    @Test
+    public void shouldNotFireAlertsAfterEmptyEvents() {
+        Map<Instant, List<FileInfo>> existing = singletonMap(Instant.now(), singletonList(mock(FileInfo.class)));
+        handler.handle(existing);
+        handler.handle(emptyMap());
+        handler.handle(existing);
+
+        verify(alerter, never()).alert(any(), any());
     }
 }

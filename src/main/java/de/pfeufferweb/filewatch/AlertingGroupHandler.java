@@ -26,10 +26,12 @@ public class AlertingGroupHandler implements GroupHandler {
 
     @Override
     public void handle(Map<Instant, List<FileInfo>> current) {
-        if (latestGroups != null) {
+        if (latestGroups == null) {
+            latestGroups = new HashMap<>(current);
+        } else {
             handleDifferences(latestGroups, current);
+            latestGroups.putAll(current);
         }
-        latestGroups = new HashMap<>(current);
     }
 
     @Override
