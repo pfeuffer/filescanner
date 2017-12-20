@@ -33,21 +33,19 @@ public class MvcController {
     }
 
     @PostMapping(value = "/start", produces = {"text/html"})
-    public String start(Model model) {
+    public String start() {
         try {
             processRunner.start();
         } catch (ProcessStartupException e) {
             throw new RuntimeException(e);
         }
-        indexModel(model);
-        return "index";
+        return "redirect:/";
     }
 
     @PostMapping(value = "/stop", produces = {"text/html"})
-    public String stop(Model model) {
+    public String stop() {
         processRunner.stop();
-        indexModel(model);
-        return "index";
+        return "redirect:/";
     }
 
     @GetMapping(value = "/view/{group}", produces = {"text/html"})
