@@ -68,7 +68,7 @@ public class HtmlMessageBuilder {
         }
 
         public ListBuilder endItem() {
-            b.append("<li>");
+            b.append("</li>");
             return this;
         }
     }
