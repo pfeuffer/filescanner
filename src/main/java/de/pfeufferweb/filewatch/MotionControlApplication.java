@@ -20,7 +20,12 @@ public class MotionControlApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MotionControlApplication.class, args);
         LOG.info("Context build");
-        context.getBean(SmtpMailer.class).sendHtmlMail("Started", HtmlMessageBuilder.simpleText("Motion Control started."));
+        context.getBean(SmtpMailer.class).sendHtmlMail("Server started",
+                new HtmlMessageBuilder()
+                        .bold("Motion Control server started.")
+                        .paragraph()
+                        .text("Motion detection is ").bold("not").text(" enabled, yet!")
+                        .toString());
     }
 }
 

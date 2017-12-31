@@ -19,11 +19,13 @@ public class MvcController {
     private final ProcessRunner processRunner;
     private final GroupHandler groupHandler;
     private final UrlFactory urlFactory;
+    private final SmtpMailer smtpMailer;
 
-    public MvcController(ProcessRunner processRunner, GroupHandler groupHandler, UrlFactory urlFactory) {
+    public MvcController(ProcessRunner processRunner, GroupHandler groupHandler, UrlFactory urlFactory, SmtpMailer smtpMailer) {
         this.processRunner = processRunner;
         this.groupHandler = groupHandler;
         this.urlFactory = urlFactory;
+        this.smtpMailer = smtpMailer;
     }
 
     @GetMapping(value = "", produces = {"text/html"})
@@ -36,6 +38,8 @@ public class MvcController {
     public String start() {
         try {
             processRunner.start();
+            smtpMailer.sendHtmlMail("Detection started",
+                    HtmlMessageBuilder.simpleText("Motion detection enabled."));
         } catch (ProcessStartupException e) {
             throw new RuntimeException(e);
         }
@@ -45,6 +49,8 @@ public class MvcController {
     @PostMapping(value = "/stop", produces = {"text/html"})
     public String stop() {
         processRunner.stop();
+        smtpMailer.sendHtmlMail("Detection stopped",
+                HtmlMessageBuilder.simpleText("Motion detection disabled."));
         return "redirect:/";
     }
 
