@@ -1,5 +1,7 @@
 package de.pfeufferweb.filewatch;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -13,8 +15,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @SpringBootApplication
 @EnableScheduling
 public class MotionControlApplication {
+    private static Log LOG = LogFactory.getLog(MotionControlApplication.class);
+
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MotionControlApplication.class, args);
+        LOG.info("Context build");
+        context.getBean(SmtpMailer.class).sendHtmlMail("Started", HtmlMessageBuilder.simpleText("Motion Control started."));
     }
 }
 

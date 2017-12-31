@@ -26,11 +26,17 @@ public class FileScanner {
     private final String directory;
     private final FileInfoHandler fileInfoHandler;
     private final Collection<String> acceptedTypes;
+    private final SmtpMailer mailer;
 
-    public FileScanner(@Value("${directory}") String directory, @Value("${acceptedTypes}") String acceptedTypes, FileInfoHandler fileInfoHandler) {
+    public FileScanner(
+            @Value("${directory}") String directory,
+            @Value("${acceptedTypes}") String acceptedTypes,
+            FileInfoHandler fileInfoHandler,
+            SmtpMailer mailer) {
         this.directory = directory;
         this.acceptedTypes = asList(acceptedTypes.toLowerCase().split(","));
         this.fileInfoHandler = fileInfoHandler;
+        this.mailer = mailer;
     }
 
     @Scheduled(fixedDelayString = "${scanIntervalMs}")
@@ -68,6 +74,13 @@ public class FileScanner {
             return of(Files.list(directoryToWatch));
         } catch (IOException e) {
             LOG.fatal("could not list files in directory", e);
+            mailer.sendHtmlMail(
+                    "Could not read image directory",
+                    new HtmlMessageBuilder()
+                            .bold("The specified image directory could not be read.")
+                            .paragraph()
+                            .text(e.toString())
+                            .toString());
             return empty();
         }
     }

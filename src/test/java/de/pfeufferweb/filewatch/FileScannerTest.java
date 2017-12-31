@@ -18,6 +18,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -30,6 +31,8 @@ public class FileScannerTest {
 
     @Mock
     private FileInfoHandler fileInfoHandler;
+    @Mock
+    private SmtpMailer mailer;
 
     @Captor
     private ArgumentCaptor<Stream<FileInfo>> fileInfoSetCaptor;
@@ -40,7 +43,7 @@ public class FileScannerTest {
         Path newFile = new File(tempDir, "a").toPath();
         Files.createFile(newFile);
 
-        new FileScanner(tempDir.getAbsolutePath(), "a", fileInfoHandler).scan();
+        new FileScanner(tempDir.getAbsolutePath(), "a", fileInfoHandler, mailer).scan();
 
         verify(fileInfoHandler).handle(any());
         assertThat(fileInfoSetCaptor.getValue().collect(toList()).size(), is(1));
@@ -54,7 +57,7 @@ public class FileScannerTest {
 
         doNothing().when(fileInfoHandler).handle(fileInfoSetCaptor.capture());
 
-        new FileScanner(tempDir.getAbsolutePath(), "a", fileInfoHandler).scan();
+        new FileScanner(tempDir.getAbsolutePath(), "a", fileInfoHandler, mailer).scan();
 
         verify(fileInfoHandler).handle(any());
         assertThat(fileInfoSetCaptor.getValue().collect(toList()).isEmpty(), is(true));
@@ -69,7 +72,7 @@ public class FileScannerTest {
 
         doNothing().when(fileInfoHandler).handle(fileInfoSetCaptor.capture());
 
-        new FileScanner(tempDir.getAbsolutePath(), "ok,good", fileInfoHandler).scan();
+        new FileScanner(tempDir.getAbsolutePath(), "ok,good", fileInfoHandler, mailer).scan();
 
         verify(fileInfoHandler).handle(any());
         assertThat(fileInfoSetCaptor.getValue().collect(toList()).size(), is(2));
@@ -77,9 +80,10 @@ public class FileScannerTest {
 
     @Test
     public void shouldHandleErrorsReadingDirectory() throws IOException {
-        new FileScanner("/i/bet/this/does/not/exist", "a", fileInfoHandler).scan();
+        new FileScanner("/i/bet/this/does/not/exist", "a", fileInfoHandler, mailer).scan();
 
         verify(fileInfoHandler, never()).handle(any());
+        verify(mailer).sendHtmlMail(anyString(), anyString());
     }
 
     @Before
